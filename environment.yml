@@ -1,0 +1,7 @@
+name: self_mnist
+channels:
+  - defaults
+dependencies:
+  - pip
+  - python=3.8
+  - git
