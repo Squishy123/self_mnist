@@ -3,5 +3,10 @@ channels:
   - defaults
 dependencies:
   - pip
-  - python=3.8
   - git
+  - python=3.8
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cudatoolkit=10.2
+prefix: C:\Users\chris\miniconda3\envs\self_mnist
