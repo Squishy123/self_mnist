@@ -38,7 +38,7 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch):
     
     model.to(device)
     knn = KNN().to(device)
-    for item_idx, (img, _) in enumerate(random.sample(list(train_dataset), 100)):
+    for item_idx, (img, _) in enumerate(random.sample(list(train_dataset), 50)):
         # send to device
         img = img.to(device).unsqueeze(0)
 
@@ -61,8 +61,8 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch):
         # calculate loss
         loss = 0
         for (n_embed, n_class) in neighbors:
-            loss += torch.nn.functional.hinge_embedding_loss(n_embed, img_embedding)
-            loss += torch.nn.functional.binary_cross_entropy_with_logits(n_class, img_class)
+            #loss += torch.nn.functional.hinge_embedding_loss(n_embed, img_embedding)
+            loss += torch.nn.functional.binary_cross_entropy(img_class, n_class.detach())
 
         loss.backward()
         optimizer.step()
