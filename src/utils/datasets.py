@@ -7,14 +7,14 @@ from torch.utils.data import DataLoader
 from models.knn import KNN
 
 default_transform = transforms.Compose([
-        transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))
+        transforms.ToTensor(), #transforms.Normalize((0.1307,), (0.3081,))
         ])
 
 augment_transform = transforms.Compose([
-        transforms.RandomResizedCrop(20),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomVerticalFlip(),
-        transforms.RandomRotation(180)
+        #transforms.RandomResizedCrop(28),
+        #transforms.RandomHorizontalFlip(),
+        #transforms.RandomVerticalFlip(),
+        #transforms.RandomRotation(180)
     ])
 
 '''

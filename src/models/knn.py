@@ -16,10 +16,10 @@ class KNN(nn.Module):
     # return the k nearest neighbors to x in X
     def forward(self, x, X):
         neighbors = []
-        for (k_embedding, k_class) in X:
+        for (k_embedding, k_class, *args) in X:
 
             k_difference = torch.sub(k_embedding, x)
-            neighbors.append((torch.sum(k_difference), (k_embedding, k_class)))
+            neighbors.append((torch.sum(k_difference), (k_embedding, k_class, *args)))
 
             # remove largest difference
             if len(neighbors) > self.k_neighbors:
