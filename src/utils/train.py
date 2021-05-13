@@ -52,16 +52,17 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch):
         with torch.no_grad():
             for s in range(len(samples)):
                 s_img, _ = samples[s]
-                embedding, _ = model(s_img.to(device).unsqueeze(0))
-                samples[s] = embedding
+                embedding, s_class = model(s_img.to(device).unsqueeze(0))
+                samples[s] = (embedding, s_class)
 
         # generate stochastic KNN for encodings
         neighbors = knn(img_embedding, samples)
 
         # calculate loss
         loss = 0
-        for n in neighbors:
-            loss += criterion(n, img_embedding)
+        for (n_embed, n_class) in neighbors:
+            loss += torch.nn.functional.hinge_embedding_loss(n_embed, img_embedding)
+            loss += torch.nn.functional.binary_cross_entropy_with_logits(n_class, img_class)
 
         loss.backward()
         optimizer.step()
