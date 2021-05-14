@@ -32,11 +32,11 @@ model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
 model.eval()
 
 # 3. Generate KNN for random sample
-x = random.sample(list(test_def), 1)[0]
+x, _ = random.sample(list(test_def), 1)[0]
 x_embed,  _, s_class = model(x.to("cuda").unsqueeze(0))
 
 knn = KNN()
-samples = random.sample(list(test_def), 100)
+samples = random.sample(list(test_def), 10000)
 
 with torch.no_grad():
     for s in range(len(samples)):
@@ -47,5 +47,14 @@ with torch.no_grad():
 # generate stochastic KNN for encodings
 neighbors = knn(x_embed, samples)
 
- for (n_embed, n_class, n_img) in neighbors:
-     
+fig, ax = plt.subplots(1, 6, constrained_layout=True)
+np.vectorize(lambda ax:ax.axis('off'))(ax)
+
+ax[0].imshow(x.squeeze(0))
+ax[0].set_title("X")
+
+for idx, (n_embed, n_class, n_img) in enumerate(neighbors):
+    ax[idx + 1].imshow(n_img.squeeze(0))
+    ax[idx + 1].set_title(idx) 
+
+plt.show()

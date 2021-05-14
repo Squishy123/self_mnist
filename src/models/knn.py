@@ -19,11 +19,12 @@ class KNN(nn.Module):
         for (k_embedding, k_class, *args) in X:
 
             k_difference = torch.sub(k_embedding, x)
-            neighbors.append((torch.sum(k_difference), (k_embedding, k_class, *args)))
+            #print(torch.norm(k_difference, dim=1).item())
+            neighbors.append((torch.norm(k_difference, dim=1).item(), (k_embedding, k_class, *args)))
 
             # remove largest difference
             if len(neighbors) > self.k_neighbors:
-                neighbors.sort(key=lambda x:x[0], reverse=True)
+                neighbors.sort(key=lambda x:x[0], reverse=False)
                 neighbors.pop()
 
         return [k for (_,k) in neighbors]
