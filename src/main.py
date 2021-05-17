@@ -27,6 +27,7 @@ model = MNIST_Classifier().to("cuda")
 optimizer = torch.optim.RMSprop(list(model.encoder.parameters()) + list(model.decoder.parameters()), lr=1e-3)
 criterion = torch.nn.MSELoss()
 
+'''
 fig1, (ax1) = plt.subplots(1, constrained_layout=True)
 fig2, (ax2) = plt.subplots(10, 2, constrained_layout=True)
 np.vectorize(lambda ax:ax.axis('off'))(ax2)
@@ -58,9 +59,9 @@ for i in range(101):
 plt.close()
 
 '''
-model.load_state_dict(torch.load("results/encoder_pretraining_49.pth"))
+model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
 model.eval()
-'''
+
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
 # 3. Train Model Encoder and Classifier
