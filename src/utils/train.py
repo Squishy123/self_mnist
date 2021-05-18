@@ -72,7 +72,7 @@ def reform_train(model, device, train_loader, optimizer, criterion, epoch):
 
     return total_loss/len(train_loader)
 
-def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, batch_size=20):
+def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, batch_size=100):
     total_loss = 0
     
     model.to(device)
@@ -90,7 +90,7 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
             print(img_class)
 
             # get samples
-            samples = random.sample(list(train_dataset), 500)
+            samples = random.sample(list(train_dataset), 1000)
 
           
             for s in range(len(samples)):
@@ -129,7 +129,7 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
                 randInt = random.randint(0,9)
                 return random_nn() if randInt in exclude else randInt 
             
-            out = torch.zeros(img_class.shape).long().to(device)
+            out = torch.zeros(img_class.shape).to(device)
             out[0][random_nn()] = 1
 
             for (n_embed, n_class) in neighbors:
