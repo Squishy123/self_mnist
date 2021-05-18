@@ -36,9 +36,16 @@ def show_images(image_dict, fileout="images.png", cols = 10, rows=10):
     #fig = plt.figure()
     for key, images in image_dict.items():
         n_images = len(images)
+        if key >= rows:
+            continue
         ax[key, 0].text(-28//2,28//2, key)
-        for n, image in enumerate(images):
-            ax[key,n].imshow(image)
+        if isinstance(images, list):
+            for n, (image) in enumerate(images):
+                if n >= cols:
+                    continue
+                ax[key,n].imshow(image)
+        else:
+            ax[key,0].imshow(images)
             #ax[key,n].axis('off')
         #fig.set_size_inches(np.array(fig.get_size_inches()) * n_images)
     fig.savefig(fileout)

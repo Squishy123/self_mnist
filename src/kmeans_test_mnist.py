@@ -1,0 +1,55 @@
+import random
+from models.kmeans import KMeans
+from models.mnist_classifier import MNIST_Classifier
+from utils.datasets import generate_augmented_datasets, generate_default_datasets
+import torch
+
+import matplotlib.pyplot as plt
+
+from utils.plot import show_images
+
+model = MNIST_Classifier().to("cuda")
+optimizer = torch.optim.RMSprop(list(model.encoder.parameters()) + list(model.decoder.parameters()), lr=1e-3)
+model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
+model.eval()
+
+# get samples
+train_def, test_def = generate_default_datasets()
+
+fig, (ax) = plt.subplots(1, constrained_layout=True)
+ax.set_title('Encoder/Classifier Training Loss')
+ax.set_xlabel('Epoch')
+ax.set_ylabel('Loss')
+
+X = []
+with torch.no_grad():
+    for item_idx, (img, _) in enumerate(random.sample(list(train_def), 10000)):
+            # send to device
+            img = img.to("cuda").unsqueeze(0)
+            img_embedding, _, img_class = model(img)
+            #X.append((img_embedding.squeeze(0).squeeze(1).squeeze(1).cpu(), img.squeeze(0).squeeze(0).cpu()))
+            X.append((torch.flatten(img.squeeze(0).squeeze(0)).cpu(), img.squeeze(0).squeeze(0).cpu()))
+#print(X)
+
+cluster = KMeans(n_clusters=10)
+cluster.init_centroids(X)
+'''
+#print(cluster.centroids)
+#exit()
+#print(cluster.centroids[0].shape)
+centroids = dict(zip(range(10), cluster.centroids))
+show_images(centroids, "centroids.png", cols=10)
+#exit()
+'''
+cluster.fit(X, 50)
+images = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]}
+
+#print(model.cluster_objects)
+for _, (k, c) in enumerate(cluster.cluster_objects.items()):
+    print(len(c))
+    for (x,y) in c:
+        images[k].append(y)
+
+show_images(images, f"cluster_images.png", cols=10)
+
+#plt.show()
