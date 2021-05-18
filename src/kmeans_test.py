@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 torch.manual_seed(123)
 
-model = KMeans(n_clusters=3, dimension=2)
+model = KMeans(n_clusters=6, dimension=2)
 X = torch.randn(100,2)/6
 model.init_centroids(X)
 
@@ -15,20 +15,20 @@ ax.set_title('Encoder/Classifier Training Loss')
 ax.set_xlabel('Epoch')
 ax.set_ylabel('Loss')
 
-for i in range(10):
-    #plt.clf()
-    model.fit(X, 10)
-    colors = ["red", "green", "blue"]
 
-    for _, (k, c) in enumerate(model.cluster_objects.items()):
-        for (x,y) in c:
-            ax.scatter(x,y, c=colors[k], cmap='cool')
+#plt.clf()
+model.fit(X, 10)
+colors = ["red", "green", "blue", "orange", "pink", "yellow"]
 
-    for i, (x, y) in enumerate(list(model.centroids)):
-        ax.scatter(x,y,c='white',
-            alpha=0.6,
-            edgecolors='black',
-            linewidths=2)
-    
-    plt.draw()
-    plt.pause(1e-5)
+for _, (k, c) in enumerate(model.cluster_objects.items()):
+    for ((x,y), _) in c:
+        ax.scatter(x,y, c=colors[k], cmap='cool')
+
+for i, (x, y) in enumerate(list(model.centroids)):
+    ax.scatter(x,y,c='white',
+        alpha=0.6,
+        edgecolors='black',
+        linewidths=2)
+plt.show()
+    #plt.draw()
+   # plt.pause(1e-5)

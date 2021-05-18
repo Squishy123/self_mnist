@@ -27,8 +27,8 @@ with torch.no_grad():
             # send to device
             img = img.to("cuda").unsqueeze(0)
             img_embedding, _, img_class = model(img)
-            #X.append((img_embedding.squeeze(0).squeeze(1).squeeze(1).cpu(), img.squeeze(0).squeeze(0).cpu()))
-            X.append((torch.flatten(img.squeeze(0).squeeze(0)).cpu(), img.squeeze(0).squeeze(0).cpu()))
+            X.append((torch.flatten(img_embedding).cpu(), img.squeeze(0).squeeze(0).cpu()))
+            #X.append((torch.flatten(img.squeeze(0).squeeze(0)).cpu(), img.squeeze(0).squeeze(0).cpu()))
 #print(X)
 
 cluster = KMeans(n_clusters=10)
@@ -41,7 +41,7 @@ centroids = dict(zip(range(10), cluster.centroids))
 show_images(centroids, "centroids.png", cols=10)
 #exit()
 '''
-cluster.fit(X, 50)
+cluster.fit(X, 20)
 images = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]}
 
 #print(model.cluster_objects)

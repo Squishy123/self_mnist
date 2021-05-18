@@ -29,7 +29,8 @@ class KMeans():
             for x in X:
                 #print(x[1])
                 if not isinstance(x, tuple):
-                    x = tuple(x)
+                    #print("not tuple")
+                    x = (x, None)
 
                 vector, *args = x
                 #print(torch.sqrt(((self.centroids-vector)**2)).sum(axis=1).shape)
@@ -52,9 +53,9 @@ class KMeans():
                         #print(l.shape)
                         #exit()
                         mean = l.sum(axis=0)/len_cluster
-                        #print(mean.shape)
+                        #print(mean)
                     
-                    loss += torch.sum(mean - self.centroids[c])
+                    loss = torch.sum(mean - self.centroids[c])
                     #print(loss)
                     self.centroids[c] = mean
 
