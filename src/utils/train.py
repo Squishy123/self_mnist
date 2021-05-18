@@ -87,7 +87,7 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
             # forward pass
             optimizer.zero_grad()
             img_embedding, _, img_class = model(img)
-            print(img_class)
+            print(torch.exp(img_class))
 
             # get samples
             samples = random.sample(list(train_dataset), 500)
@@ -100,24 +100,15 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
 
             # calculate loss
             # intial loss from model forward to one-hot
-            desired_one_hot = torch.zeros(img_class.shape, dtype=torch.float).to(device)
-            desired_one_hot[0][torch.argmax(img_class, dim=1).item()] = 1
-            #desired_one_hot= torch.tensor([torch.argmax(img_class, dim=1).item()]).to(device)
-            #invert_one_hot = torch.ones(img_class.shape, dtype=torch.float).to(device)
-            #invert_one_hot[0][torch.argmax(img_class, dim=1).item()] = 0
+            desired_one_hot = torch.Tensor([torch.argmax(img_class, dim=1).item()]).to(device)
+            loss = 0.5 * torch.nn.functional.nll_loss(img_class, desired_one_hot.long())
+            print(loss.item())
             
-            #loss = torch.nn.functional.mse_loss(img_class, desired_one_hot)
-            #print(loss.item())
-            loss = 0
             # generate stochastic nearest KNN for closest encodings
             neighbors = knn(img_embedding, samples, direction=1)
             n_loss = 0
             for (n_embed, n_class) in neighbors:
-                #difference_output = torch.sub(img_embedding, n_embed)
-                #loss += torch.nn.functional.mse_loss(difference_output, torch.zeros(*difference_output.shape).to(device))
-                #loss += torch.nn.functional.binary_cross_entropy_with_logits(img_class, n_class.detach())
-                #n_loss += torch.nn.functional.cross_entropy(n_class, desired_one_hot)
-                n_loss += torch.nn.functional.binary_cross_entropy(n_class, desired_one_hot)
+                n_loss += 0.3 * torch.nn.functional.nll_loss(n_class, desired_one_hot.long())
 
             print(n_loss.item())
             
@@ -129,16 +120,16 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
                 randInt = random.randint(0,9)
                 return random_nn() if randInt in exclude else randInt 
             
-            out = torch.zeros(img_class.shape).long().to(device)
-            out[0][random_nn()] = 1
-
+            out_d = torch.Tensor([random_nn()]).to(device)
             for (n_embed, n_class) in neighbors:
-                #difference_output = torch.sub(img_embedding, n_embed)
-                #loss += torch.nn.functional.mse_loss(difference_output, torch.zeros(*difference_output.shape).to(device))
-                f_loss -= 2 * torch.nn.functional.binary_cross_entropy(n_class, desired_one_hot)
-                #f_loss += torch.nn.functional.cross_entropy(n_class, out)
-                f_loss += torch.nn.functional.binary_cross_entropy(n_class, out)
-                #f_loss += 1.5 * torch.nn.functional.mse_loss(n_class, 2 * invert_one_hot)
+                if torch.argmax(n_class, dim=1).item() != torch.argmax(img_class, dim=1).item():
+                    out = torch.Tensor([torch.argmax(n_class, dim=1).item()]).to(device)
+                    f_loss -= 0.5 * torch.nn.functional.nll_loss(n_class, desired_one_hot.long())
+                    f_loss += 0.3 * torch.nn.functional.nll_loss(n_class, out.long())
+                    f_loss += 0.5 * torch.nn.functional.nll_loss(n_class, out_d.long())
+                else:
+                    f_loss -= 0.5 * torch.nn.functional.nll_loss(n_class, desired_one_hot.long())
+                    f_loss += 0.5 * torch.nn.functional.nll_loss(n_class, out_d.long())
 
             print(f_loss.item())
 
@@ -157,7 +148,7 @@ def classifier_train(model, device, train_dataset, optimizer, criterion, epoch, 
 
         optimizer.zero_grad()
         print(batch_dist)
-        loss = -100 * batch_size * torch.nn.functional.kl_div(batch_dist/batch_size, torch.ones(batch_dist.shape).to(device)/batch_size)
+        loss = 100 * batch_size * torch.nn.functional.kl_div(torch.nn.functional.log_softmax(batch_dist/batch_size), torch.ones(batch_dist.shape).to(device)/batch_size)
         print(loss.item())
         loss.requires_grad = True
         loss.backward()

@@ -59,7 +59,7 @@ for i in range(101):
 plt.close()
 
 '''
-model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
+model.load_state_dict(torch.load("results/classifier_training_27.pth"))
 model.eval()
 
 optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-3)
@@ -96,7 +96,7 @@ ax2.set_ylabel('Score')
 for i in range(101):
     ep_loss = classifier_train(model, "cuda",  train_def, optimizer, criterion, i)
     ax1.scatter(i, ep_loss, color="blue")
-    fig1.savefig("results/classifier_training_loss.png")
+    fig1.savefig("results/nclassifier_training_loss.png")
 
     # validation plot 
     images = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]}
@@ -111,10 +111,10 @@ for i in range(101):
 
         images[j_class].append(j_sample.squeeze(0).squeeze(0).detach().cpu().numpy())
 
-    show_images(images, f"results/classifier_training_{i}_images.png", cols=20)
+    show_images(images, f"results/nclassifier_training_{i}_images.png", cols=20)
 
     #if i % 10 == 0:
-    torch.save(model.state_dict(), f"results/classifier_training_{i}.pth")
+    torch.save(model.state_dict(), f"results/nclassifier_training_{i}.pth")
 
 plt.close()
 '''

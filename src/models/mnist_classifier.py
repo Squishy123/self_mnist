@@ -34,7 +34,7 @@ class MNIST_Classifier(nn.Module):
             ('classifier_linear1', nn.Linear(64, 32)),
             ('classifier_relu1', nn.LeakyReLU()),
             ('classifier_linear2', nn.Linear(32, num_classes)),
-            ('classifier_softmax1', nn.Softmax(dim=1))
+            ('classifier_softmax1', nn.LogSoftmax(dim=1))
         ]))
         
 
