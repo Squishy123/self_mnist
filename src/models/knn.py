@@ -14,7 +14,7 @@ class KNN(nn.Module):
         self.k_neighbors = k_neighbors
 
     # return the k nearest neighbors to x in X
-    def forward(self, x, X):
+    def forward(self, x, X, direction=1):
         neighbors = []
         for (k_embedding, k_class, *args) in X:
 
@@ -24,7 +24,10 @@ class KNN(nn.Module):
 
             # remove largest difference
             if len(neighbors) > self.k_neighbors:
-                neighbors.sort(key=lambda x:x[0], reverse=False)
+                if direction == -1:
+                    neighbors.sort(key=lambda x:x[0], reverse=True)
+                else:
+                    neighbors.sort(key=lambda x:x[0], reverse=False)
                 neighbors.pop()
 
         return [k for (_,k) in neighbors]

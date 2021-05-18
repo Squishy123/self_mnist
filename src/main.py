@@ -1,6 +1,6 @@
 from utils.datasets import generate_augmented_datasets, generate_default_datasets
 from models.mnist_classifier import MNIST_Classifier
-from utils.train import encoder_pretrain, classifier_train
+from utils.train import encoder_pretrain, classifier_train, reform_train
 from utils.plot import show_images
 
 import matplotlib.pyplot as plt
@@ -62,7 +62,23 @@ plt.close()
 model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
 model.eval()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-3)
+
+# 3. Reform Classes
+'''
+fig1, (ax1) = plt.subplots(1, constrained_layout=True)
+
+ax1.set_title('Distribution Reforming')
+ax1.set_xlabel('Epoch')
+ax1.set_ylabel('Loss') 
+
+for i in range(10):
+    ep_loss = reform_train(model, "cuda", DataLoader(train_def, batch_size=512, shuffle=True), optimizer, criterion, i)
+    ax1.scatter(i, ep_loss, color="blue")
+    fig1.savefig("results/distribution_reforming.png")
+
+torch.save(model.state_dict(), f"results/distribution_uniform.pth")
+'''
 
 # 3. Train Model Encoder and Classifier
 
