@@ -11,8 +11,8 @@ default_transform = transforms.Compose([
         ])
 
 augment_transform = transforms.Compose([
-        #transforms.RandomResizedCrop(28),
-        #transforms.RandomHorizontalFlip(),
+        transforms.RandomResizedCrop(28),
+        transforms.RandomHorizontalFlip(),
         #transforms.RandomVerticalFlip(),
         #transforms.RandomRotation(180)
     ])

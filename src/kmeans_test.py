@@ -17,7 +17,7 @@ ax.set_ylabel('Loss')
 
 
 #plt.clf()
-model.fit(X, 10)
+model.fit(X, 20)
 colors = ["red", "green", "blue", "orange", "pink", "yellow"]
 
 for _, (k, c) in enumerate(model.cluster_objects.items()):

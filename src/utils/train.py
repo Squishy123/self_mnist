@@ -17,14 +17,14 @@ def encoder_pretrain(model, device, aug_train_loader, optimizer, criterion, epoc
         # forward pass
         optimizer.zero_grad()
         img_embedding, img_decoded, img_class = model(img)
-        aug_embedding, _, aug_class = model(aug)
+        aug_embedding, aug_decoded, aug_class = model(aug)
 
         # calculate difference
         #difference_output = torch.sub(img_embedding, aug_embedding)
         
         # calculate loss
         #loss = torch.nn.functional.mse_loss(difference_output, torch.zeros(*difference_output.shape).to(device))
-        loss = torch.nn.functional.mse_loss(img_decoded, img)
+        loss = torch.nn.functional.mse_loss(img_decoded, img) + torch.nn.functional.mse_loss(aug_decoded, img)
         loss.backward()
         optimizer.step()
 

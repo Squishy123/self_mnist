@@ -24,10 +24,12 @@ for i, (img, label) in enumerate(test_def):
 
 # 2. Pretrain Model Encoder on Augmentations
 model = MNIST_Classifier().to("cuda")
-optimizer = torch.optim.RMSprop(list(model.encoder.parameters()) + list(model.decoder.parameters()), lr=1e-3)
+optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-3)
 criterion = torch.nn.MSELoss()
 
-'''
+model.load_state_dict(torch.load("results/encoder_pretraining_200.pth"))
+model.eval()
+
 fig1, (ax1) = plt.subplots(1, constrained_layout=True)
 fig2, (ax2) = plt.subplots(10, 2, constrained_layout=True)
 np.vectorize(lambda ax:ax.axis('off'))(ax2)
@@ -36,7 +38,7 @@ ax1.set_title('Encoder Pretraining Loss')
 ax1.set_xlabel('Epoch')
 ax1.set_ylabel('Loss')
 
-for i in range(101):
+for i in range(201, 501):
     ep_loss = encoder_pretrain(model, "cuda", DataLoader(train_aug, batch_size=512, shuffle=True), optimizer, criterion, i)
     ax1.scatter(i, ep_loss, color="blue")
     fig1.savefig("results/encoder_pretraining_loss.png")
@@ -58,7 +60,8 @@ for i in range(101):
 
 plt.close()
 
-'''
+exit()
+
 model.load_state_dict(torch.load("results/encoder_pretraining_100.pth"))
 model.eval()
 
