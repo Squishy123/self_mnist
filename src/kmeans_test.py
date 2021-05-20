@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 torch.manual_seed(123)
 
-model = KMeans(n_clusters=6, dimension=2)
+model = KMeans(n_clusters=5, dimension=2)
 X = torch.randn(100,2)/6
 model.init_centroids(X)
 
@@ -18,6 +18,8 @@ ax.set_ylabel('Loss')
 
 #plt.clf()
 model.fit(X, 20)
+#print(model.entropy())
+
 colors = ["red", "green", "blue", "orange", "pink", "yellow"]
 
 for _, (k, c) in enumerate(model.cluster_objects.items()):

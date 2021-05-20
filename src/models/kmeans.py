@@ -1,4 +1,5 @@
 import random
+from numpy import log, log10, log2
 import torch
 import matplotlib.pyplot as plt
 
@@ -20,6 +21,22 @@ class KMeans():
         else: 
             sample = random.sample([x for x in X], self.n_clusters)
         self.centroids = torch.stack(sample)
+
+    def entropy(self):
+        total_length = 0
+
+        count = torch.zeros(self.n_clusters)
+
+        # len of all items
+        for idx, (k, cluster) in enumerate(self.cluster_objects.items()):
+            total_length += len(cluster)
+            count[k] = len(cluster)
+
+        # get probabilities
+        count /= total_length
+        entropy = -sum([p * log(p)/log(self.n_clusters) for p in count])            
+
+        return entropy.item()
 
     # fit vectors
     def fit(self, X, max_iterations=100):
