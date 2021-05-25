@@ -18,9 +18,13 @@ class MNIST_Classifier(nn.Module):
             ('encoder_relu2', nn.LeakyReLU()),
             ('encoder_conv3', nn.Conv2d(32, 64, kernel_size=7)),
             ('encoder_relu3', nn.LeakyReLU()),
+            #('encoder_conv4', nn.Conv2d(64, 10, kernel_size=1)),
+            #('encoder_relu4', nn.LeakyReLU()),
         ]))
 
         self.decoder = nn.Sequential(OrderedDict([
+            #('decoder_Tconv0', nn.ConvTranspose2d(10, 64, kernel_size=1)),
+            #('decoder_relu0', nn.LeakyReLU()),
             ('decoder_Tconv1', nn.ConvTranspose2d(64, 32, kernel_size=7)),
             ('decoder_relu1', nn.LeakyReLU()),
             ('decoder_Tconv2', nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1)),
@@ -30,7 +34,9 @@ class MNIST_Classifier(nn.Module):
         ]))
 
         self.head = nn.Sequential(OrderedDict([
-            ('encoder_flatten', nn.Flatten()),
+            ('encoder_flatten0', nn.Flatten()),
+            #('classifier_linear0', nn.Linear(10, 64)),
+            #('classifier_relu0', nn.LeakyReLU()),
             ('classifier_linear1', nn.Linear(64, 32)),
             ('classifier_relu1', nn.LeakyReLU()),
             ('classifier_linear2', nn.Linear(32, num_classes)),
