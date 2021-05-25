@@ -27,7 +27,7 @@ model = MNIST_Classifier().to("cuda")
 optimizer = torch.optim.RMSprop(model.parameters(), lr=1e-3)
 criterion = torch.nn.MSELoss()
 
-model.load_state_dict(torch.load("results/encoder_pretraining_200.pth"))
+model.load_state_dict(torch.load("results/encoder_pretraining_900.pth"))
 model.eval()
 
 fig1, (ax1) = plt.subplots(1, constrained_layout=True)
@@ -38,7 +38,7 @@ ax1.set_title('Encoder Pretraining Loss')
 ax1.set_xlabel('Epoch')
 ax1.set_ylabel('Loss')
 
-for i in range(201, 501):
+for i in range(901, 2001):
     ep_loss = encoder_pretrain(model, "cuda", DataLoader(train_aug, batch_size=512, shuffle=True), optimizer, criterion, i)
     ax1.scatter(i, ep_loss, color="blue")
     fig1.savefig("results/encoder_pretraining_loss.png")

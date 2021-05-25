@@ -34,13 +34,14 @@ class KMeans():
 
         # get probabilities
         count /= total_length
-        entropy = -sum([p * log(p)/log(self.n_clusters) for p in count])            
+        print(count)
+        entropy = -sum([p * log(p + 1e-8)/log(self.n_clusters) for p in count])            
 
         return entropy.item()
 
     # fit vectors
-    def fit(self, X, max_iterations=100):
-
+    def fit(self, X, max_iterations=100, dist="cosine"):
+        last_loss = 0
         for m in range(max_iterations):
             # assign all examples to clusters
             for x in X:
@@ -50,8 +51,14 @@ class KMeans():
                     x = (x, None)
 
                 vector, *args = x
-                #print(torch.sqrt(((self.centroids-vector)**2)).sum(axis=1).shape)
-                mean = torch.sqrt(((self.centroids-vector)**2)).sum(axis=1)
+                #print(self.centroids.shape)
+                #print(vector.repeat(self.n_clusters, 1).shape)
+                #mean = torch.sqrt(((self.centroids-vector)**2)).sum(axis=1)
+                if dist == "cosine":
+                    mean = torch.nn.functional.cosine_similarity(torch.nn.functional.normalize(self.centroids, p=2, dim=1), torch.nn.functional.normalize(vector.repeat(self.n_clusters, 1), p=2, dim=1), dim=1)
+                elif dist == "euclidean":
+                    mean = torch.sqrt(((self.centroids-vector)**2)).sum(axis=1)
+                #print(mean.shape)
                 cluster_idx = torch.argmin(mean).item()
                 #print(cluster_idx)
                 self.append_object(x, cluster_idx)
@@ -68,15 +75,21 @@ class KMeans():
                     else:
                         l = torch.stack([e[0] for e in self.cluster_objects[c]], axis=0)
                         #print(l.shape)
-                        #exit()
-                        mean = l.sum(axis=0)/len_cluster
-                        #print(mean)
+                        mean = torch.mean(l, 0)
+                        #print(mean.shape)
                     
-                    loss = torch.sum(mean - self.centroids[c])
+                    #print(mean-self.centroids[c])
+                    temp = self.centroids[c].clone()
                     #print(loss)
                     self.centroids[c] = mean
-
+                    loss += torch.sum(self.centroids[c] - temp)
+            
             print(f"KMeans Clustering - Epoch: {m} - Loss: {loss.item()}")
+
+            if (abs(loss) == abs(last_loss)):
+                break
+            else:
+                last_loss = loss
 
             # clear cluster objects
             if m != max_iterations - 1:

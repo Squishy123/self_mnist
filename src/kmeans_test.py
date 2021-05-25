@@ -15,7 +15,6 @@ ax.set_title('Encoder/Classifier Training Loss')
 ax.set_xlabel('Epoch')
 ax.set_ylabel('Loss')
 
-
 #plt.clf()
 model.fit(X, 20)
 #print(model.entropy())
